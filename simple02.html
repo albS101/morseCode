@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morse Code Trainer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 5px;
+    }
+    .practice-area {
+      margin-bottom: 20px;
+    }
+    .reference-container {
+      margin-top: 40px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+    #toggleSection {
+      margin: 20px 0;
+    }
+    /* Responsive image */
+    .reference-container img {
+      max-width: 90%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Morse Code Trainer</h1>
+
+  <!-- Practice Area -->
+  <div class="practice-area">
+    <h2>Translate: <span id="word"></span></h2>
+    <button onclick="addSymbol('.')">Dot (.)</button>
+    <button onclick="addSymbol('-')">Dash (-)</button>
+    <button onclick="checkAnswer()">Check Answer ✅</button>
+    <button onclick="clearInput()">Clear ❌</button>
+    <div id="output"></div>
+  </div>
+  
+  <!-- Toggle Reference Section -->
+  <div id="toggleSection">
+    <label>
+      <input type="radio" name="referenceToggle" value="show" checked onclick="toggleReference(true)">
+      Show Reference
+    </label>
+    <label>
+      <input type="radio" name="referenceToggle" value="hide" onclick="toggleReference(false)">
+      Hide Reference
+    </label>
+  </div>
+  
+  <!-- Reference Container -->
+  <div id="reference" class="reference-container">
+    <h2>Morse Code Reference</h2>
+    <p>Letters A-Z & Numbers 0-9</p>
+    <img src="morse_tree_example.png" alt="Morse Code Tree">
+  </div>
+
+  <!-- JavaScript for functionality -->
+  <script>
+    // Morse code mapping for each letter
+    const morseMapping = {
+      A: ".-",    B: "-...",  C: "-.-.",  D: "-..",
+      E: ".",     F: "..-.",  G: "--.",   H: "....",
+      I: "..",    J: ".---",  K: "-.-",   L: ".-..",
+      M: "--",    N: "-.",    O: "---",   P: ".--.",
+      Q: "--.-",  R: ".-.",   S: "...",   T: "-",
+      U: "..-",   V: "...-",  W: ".--",   X: "-..-",
+      Y: "-.--",  Z: "--.."
+    };
+
+    // Convert a word to its Morse representation (concatenated with no spaces)
+    function getMorse(word) {
+      return word.split("").map(letter => morseMapping[letter]).join("");
+    }
+
+    // Array of 100 words drawn from various categories
+    const words = [
+      "HELLO", "WORLD", "CAR", "HOUSE", "FLAG", "SHIP", "ZEBRA",
+      "RAIN", "SUNNY", "CLOUD", "STORM", "WIND", "FOG", "SNOW",
+      "COMPASS", "MAP", "ROUTE", "COURSE", "BEARING", "DIRECTION", "NAVIGATE", "SEXTANT",
+      "SAIL", "BOAT", "ANCHOR", "PORT", "STARBOARD", "DECK", "BOW", "STERN", "CREW", "MARINER",
+      "BUILDING", "BRIDGE", "TOWER", "DOME", "MANSION", "COTTAGE", "SKYSCRAPER", "VILLA", "PALACE", "STRUCTURE",
+      "LION", "TIGER", "BEAR", "EAGLE", "WOLF", "FOX", "RABBIT", "DEER", "HORSE", "ELEPHANT",
+      "MONKEY", "DOG", "CAT", "GIRAFFE", "KANGAROO", "PENGUIN", "HIPPO", "RHINOCEROS", "CROCODILE", "SQUIRREL", "OTTER", "BEAVER",
+      "CARGO", "FERRY", "YACHT", "SUBMARINE", "BATTLESHIP", "CLIPPER", "CRUISE",
+      "RUDDER", "HELM", "OAR", "SAILOR", "GPS", "RADAR",
+      "HAIL", "THUNDER", "LIGHTNING", "BREEZE", "MIST", "SLEET",
+      "CABIN", "LODGE", "FORTRESS", "SKYLINE", "MAUSOLEUM", "AMPHITHEATER",
+      "SNAKE", "LIZARD", "FROG", "BUTTERFLY", "BEETLE", "ANT", "BIRD", "CRICKET", "SPIDER", "SCORPION", "OCTOPUS"
+    ];
+
+    let currentWord = "";
+    let userInput = "";
+
+    // Pick a new random word from the words array
+    function newWord() {
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      document.getElementById("word").textContent = currentWord;
+      userInput = "";
+      updateOutput();
+    }
+
+    // Append dot or dash to user input
+    function addSymbol(symbol) {
+      userInput += symbol;
+      updateOutput();
+    }
+
+    // Update the displayed output to show the current user input
+    function updateOutput() {
+      document.getElementById("output").textContent = userInput;
+    }
+
+    // Check if the user's Morse input matches the expected Morse conversion of currentWord
+    function checkAnswer() {
+      if (userInput === getMorse(currentWord)) {
+        alert("✅ Correct!");
+        newWord();
+      } else {
+        alert("❌ Try again!");
+      }
+    }
+
+    // Clear the current user input
+    function clearInput() {
+      userInput = "";
+      updateOutput();
+    }
+
+    // Toggle the reference container's visibility based on the radio button choice
+    function toggleReference(show) {
+      document.getElementById("reference").style.display = show ? "block" : "none";
+    }
+
+    // Initialize the trainer on page load
+    newWord();
+  </script>
+</body>
+</html>
