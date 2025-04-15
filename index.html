@@ -9,9 +9,10 @@
       font-family: Arial, sans-serif;
       text-align: center;
     }
+    /* Increase size of buttons */
     button {
-      font-size: 16px;
-      padding: 10px;
+      font-size: 20px;
+      padding: 12px;
       margin: 5px;
     }
     .practice-area {
@@ -25,7 +26,13 @@
     #toggleSection {
       margin: 20px 0;
     }
-    /* Responsive image */
+    /* Ensure the output text is large; updated segments will be even bigger */
+    #output {
+      font-size: 36px;
+      margin-top: 15px;
+      min-height: 40px;
+    }
+    /* Responsive reference image */
     .reference-container img {
       max-width: 90%;
       height: auto;
@@ -39,6 +46,7 @@
   <div class="practice-area">
     <h2>Translate: <span id="word"></span></h2>
     <button onclick="addSymbol('.')">Dot (.)</button>
+    <button onclick="addSymbol(' ')">Space</button>
     <button onclick="addSymbol('-')">Dash (-)</button>
     <button onclick="checkAnswer()">Check Answer ✅</button>
     <button onclick="clearInput()">Clear ❌</button>
@@ -77,12 +85,17 @@
       Y: "-.--",  Z: "--.."
     };
 
-    // Convert a word to its Morse representation (concatenated with no spaces)
+    // Convert a word to its Morse representation, with a space between each letter's code.
     function getMorse(word) {
-      return word.split("").map(letter => morseMapping[letter]).join("");
+      return word.split("").map(letter => morseMapping[letter]).join(" ");
     }
 
-    // Array of 100 words drawn from various categories
+    // Normalize a string: trim extra spaces and replace multiple spaces with one.
+    function normalize(str) {
+      return str.trim().replace(/\s+/g, " ");
+    }
+
+    // Array of 100 words drawn from various categories.
     const words = [
       "HELLO", "WORLD", "CAR", "HOUSE", "FLAG", "SHIP", "ZEBRA",
       "RAIN", "SUNNY", "CLOUD", "STORM", "WIND", "FOG", "SNOW",
@@ -101,7 +114,7 @@
     let currentWord = "";
     let userInput = "";
 
-    // Pick a new random word from the words array
+    // Pick a new random word from the words array.
     function newWord() {
       currentWord = words[Math.floor(Math.random() * words.length)];
       document.getElementById("word").textContent = currentWord;
@@ -109,20 +122,37 @@
       updateOutput();
     }
 
-    // Append dot or dash to user input
+    // Append the symbol (dot, dash, or space) to the user's input.
     function addSymbol(symbol) {
       userInput += symbol;
       updateOutput();
     }
 
-    // Update the displayed output to show the current user input
+    // Update the displayed output with alternating colors and larger, bolder segments.
     function updateOutput() {
-      document.getElementById("output").textContent = userInput;
+      // Split by space to get segments.
+      const segments = userInput.split(" ");
+      // Colors for alternating segments
+      const colors = ["darkorange", "darkgreen"];
+      let html = "";
+      
+      segments.forEach((seg, index) => {
+        // Insert a space between segments if not the first one.
+        if (index > 0) {
+          html += "<span style='font-size: 36px;'> </span>";
+        }
+        // Wrap each non-empty segment in a span with its alternating color, larger font size, and bold weight.
+        if (seg.length > 0) {
+          html += "<span style='color:" + colors[index % colors.length] + "; font-size: 36px; font-weight: bold;'>" + seg + "</span>";
+        }
+      });
+      
+      document.getElementById("output").innerHTML = html;
     }
 
-    // Check if the user's Morse input matches the expected Morse conversion of currentWord
+    // Check if the normalized user input matches the expected Morse of the current word.
     function checkAnswer() {
-      if (userInput === getMorse(currentWord)) {
+      if (normalize(userInput) === getMorse(currentWord)) {
         alert("✅ Correct!");
         newWord();
       } else {
@@ -130,18 +160,18 @@
       }
     }
 
-    // Clear the current user input
+    // Clear the current user input.
     function clearInput() {
       userInput = "";
       updateOutput();
     }
 
-    // Toggle the reference container's visibility based on the radio button choice
+    // Toggle the reference container's visibility based on the radio button choice.
     function toggleReference(show) {
       document.getElementById("reference").style.display = show ? "block" : "none";
     }
 
-    // Initialize the trainer on page load
+    // Initialize the trainer on page load.
     newWord();
   </script>
 </body>
